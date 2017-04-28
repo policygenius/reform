@@ -11,11 +11,19 @@ module Reform
       def from(representer)
         options = {}
 
+        puts "\n-------------- REPRESENTABLE ATTRS START ---------------"
+        puts representer.representable_attrs
+        puts "-------------- REPRESENTABLE ATTRS END---------------\n"
+
         representer.representable_attrs.each do |definition|
           process_definition!(options, definition)
         end
 
         Class.new(self).tap do |composition| # for 1.8 compat. you're welcome.
+          puts "\n-------------- REFORM OPTIONS START ---------------"
+          puts "OPTIONS: #{options}"
+          puts options.inspect
+          puts "-------------- REFORM OPTIONS END ---------------\n"
           composition.map(options)
           # puts composition@map.inspect
         end
