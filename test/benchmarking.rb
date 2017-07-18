@@ -1,8 +1,8 @@
-require 'reform'
+require 'reform_one_two_six'
 require 'ostruct'
 require 'benchmark'
 
-class BandForm < Reform::Form
+class BandForm < ReformOneTwoSix::Form
   property :name, validates: {presence: true}
 
   collection :songs do

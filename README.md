@@ -1,6 +1,6 @@
-# Reform
+# ReformOneTwoSix
 
-Decouple your models from forms. Reform gives you a form object with validations and nested setup of models. It is completely framework-agnostic and doesn't care about your database.
+Decouple your models from forms. ReformOneTwoSix gives you a form object with validations and nested setup of models. It is completely framework-agnostic and doesn't care about your database.
 
 Although reform can be used in any Ruby framework, it comes with [Rails support](#rails-integration), works with [simple_form and other form gems](#formbuilder-support), allows nesting forms to implement [has_one](#nesting-forms-1-1-relations) and [has_many](#nesting-forms-1-n-relations) relationships, can [compose a form](#compositions) from multiple objects and gives you [coercion](#coercion).
 
@@ -8,7 +8,7 @@ Although reform can be used in any Ruby framework, it comes with [Rails support]
 ![](https://raw.githubusercontent.com/apotonick/trailblazer/master/doc/trb.jpg)
 </a>
 
-Reform is part of the [Trailblazer project](https://github.com/apotonick/trailblazer). Please [buy my book](https://leanpub.com/trailblazer) to support the development and learn everything about Reform. Currently the book discusses:
+ReformOneTwoSix is part of the [Trailblazer project](https://github.com/apotonick/trailblazer). Please [buy my book](https://leanpub.com/trailblazer) to support the development and learn everything about ReformOneTwoSix. Currently the book discusses:
 
 * Form objects, the DSL and basic API (chapter 2 and 3)
 * Basic validations and rendering forms (chapter 3)
@@ -22,12 +22,12 @@ More chapters are coming!
 Add this line to your Gemfile:
 
 ```ruby
-gem 'reform'
+gem 'reform_one_two_six'
 ```
 
 ## Nomenclature
 
-Reform comes with two base classes.
+ReformOneTwoSix comes with two base classes.
 
 * `Form` is what made you come here - it gives you a form class to handle all validations, wrap models, allow rendering with Rails form helpers, simplifies saving of models, and more.
 * `Contract` gives you a sub-set of `Form`: [this class](#contracts) is meant for API validation where already populated models get validated without having to maintain validations in the model classes.
@@ -38,7 +38,7 @@ Reform comes with two base classes.
 You're working at a famous record label and your job is archiving all the songs, albums and artists. You start with a form to populate your `songs` table.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
   property :length
 
@@ -52,7 +52,7 @@ Define your form's fields using `::property`. Validations no longer go into the 
 Luckily, this can be shortened as follows.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title, validates: {presence: true}
   property :length, validates: {numericality: true}
 end
@@ -61,7 +61,7 @@ end
 Use `properties` to bulk-specify fields.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   properties :title, :length, validates: {presence: true} # both required!
   validates :length, numericality: true
 end
@@ -102,10 +102,10 @@ class SongsController
   end
 ```
 
-Reform will read property values from the model in setup. Given the following form class.
+ReformOneTwoSix will read property values from the model in setup. Given the following form class.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
 ```
 
@@ -114,7 +114,7 @@ Internally, this form will call `song.title` to populate the title field.
 If you, for whatever reasons, want to use a different public name, use `:from`.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :name, from: :title
 ```
 
@@ -131,7 +131,7 @@ Your `@form` is now ready to be rendered, either do it yourself or use something
   = f.input :title
 ```
 
-Nested forms and collections can be easily rendered with `fields_for`, etc. Just use Reform as if it would be an ActiveModel instance in the view layer.
+Nested forms and collections can be easily rendered with `fields_for`, etc. Just use ReformOneTwoSix as if it would be an ActiveModel instance in the view layer.
 
 Note that you have a mechanism to [prepopulate forms](#prepopulating-forms) for rendering.
 
@@ -158,7 +158,7 @@ This allows rendering the form after `validate` with the data that has been subm
 
 ## Syncing Back
 
-After validation, you have two choices: either call `#save` and let Reform sort out the rest. Or call `#sync`, which will write all the properties back to the model. In a nested form, this works recursively, of course.
+After validation, you have two choices: either call `#save` and let ReformOneTwoSix sort out the rest. Or call `#sync`, which will write all the properties back to the model. In a nested form, this works recursively, of course.
 
 It's then up to you what to do with the updated models - they're still unsaved.
 
@@ -227,7 +227,7 @@ Contracts can be used to completely remove validation logic from your model clas
 A contract looks like a form.
 
 ```ruby
-class AlbumContract < Reform::Contract
+class AlbumContract < ReformOneTwoSix::Contract
   property :title
   validates :title, length: {minimum: 9}
 
@@ -273,7 +273,7 @@ end
 The edit form should allow changing data for artist and song.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
   property :length
 
@@ -346,7 +346,7 @@ form.song.save
 
 ## Nesting Forms: 1-n Relations
 
-Reform also gives you nested collections.
+ReformOneTwoSix also gives you nested collections.
 
 Let's have Albums with songs!
 
@@ -359,7 +359,7 @@ end
 The form might look like this.
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   property :title
 
   collection :songs do
@@ -374,7 +374,7 @@ This basically works like a nested `property` that iterates over a collection of
 
 ### has_many: Rendering
 
-Reform will expose the collection using the `#songs` method.
+ReformOneTwoSix will expose the collection using the `#songs` method.
 
 ```haml
 = text_field :title,         @form.title
@@ -409,10 +409,10 @@ end
 
 ### Turning Off Autosave
 
-You can assign Reform to _not_ call `save` on a particular nested model (per default, it is called automatically on all nested models).
+You can assign ReformOneTwoSix to _not_ call `save` on a particular nested model (per default, it is called automatically on all nested models).
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   # ...
 
   collection :songs, save: false do
@@ -435,7 +435,7 @@ Let's assume you rendered the following form.
 
 This will render two nested forms to create new songs.
 
-When **validating**, you're supposed to setup the very same object graph, again. Reform has no way of remembering what the object setup was like a request ago.
+When **validating**, you're supposed to setup the very same object graph, again. ReformOneTwoSix has no way of remembering what the object setup was like a request ago.
 
 So, the following code will fail.
 
@@ -443,10 +443,10 @@ So, the following code will fail.
 @form = AlbumForm.new(Album.new).validate(params[:album])
 ```
 
-However, you can advise Reform to setup the correct objects for you.
+However, you can advise ReformOneTwoSix to setup the correct objects for you.
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   # ...
 
   collection :songs, populate_if_empty: Song do
@@ -456,10 +456,10 @@ class AlbumForm < Reform::Form
 
 This works for both `property` and `collection` and instantiates `Song` objects where they're missing when calling `#validate`.
 
-If you want to create the objects yourself, because you're smarter than Reform, do it with a lambda.
+If you want to create the objects yourself, because you're smarter than ReformOneTwoSix, do it with a lambda.
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   # ...
 
   collection :songs, populate_if_empty: lambda { |fragment, args| Song.new } do
@@ -475,7 +475,7 @@ Sometimes you might want to embrace two (or more) unrelated objects with a singl
 Say we were to edit a song and the label data the record was released from. Internally, this would imply working on the `songs` table and the `labels` table.
 
 ```ruby
-class SongWithLabelForm < Reform::Form
+class SongWithLabelForm < ReformOneTwoSix::Form
   include Composition
 
   property :title, on: :song
@@ -535,7 +535,7 @@ To maximize reusability, you can also define forms in modules and include them i
 
 ```ruby
 module SongsForm
-  include Reform::Form::Module
+  include ReformOneTwoSix::Form::Module
 
   collection :songs do
     property :title
@@ -547,14 +547,14 @@ end
 This can now be included into a real form.
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   property :title
 
   include SongsForm
 end
 ```
 
-Note that you can also override properties [using inheritance](#inheritance) in Reform.
+Note that you can also override properties [using inheritance](#inheritance) in ReformOneTwoSix.
 
 
 ## Inheritance
@@ -562,7 +562,7 @@ Note that you can also override properties [using inheritance](#inheritance) in 
 Forms can be derived from other forms and will inherit all properties and validations.
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   property :title
 
   collection :songs do
@@ -600,16 +600,16 @@ Using `inherit:` here will extend the existing `songs` form with the `band_id` f
 
 ## Coercion
 
-Often you want incoming form data to be converted to a type, like timestamps. Reform uses [virtus](https://github.com/solnic/virtus) for coercion, the DSL is seamlessly integrated into Reform with the `:type` option.
+Often you want incoming form data to be converted to a type, like timestamps. ReformOneTwoSix uses [virtus](https://github.com/solnic/virtus) for coercion, the DSL is seamlessly integrated into ReformOneTwoSix with the `:type` option.
 
 ### Virtus Coercion
 
 Be sure to add `virtus` to your Gemfile.
 
 ```ruby
-require 'reform/form/coercion'
+require 'reform_one_two_six/form/coercion'
 
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   include Coercion
 
   property :written_at, type: DateTime
@@ -629,7 +629,7 @@ form.written_at #=> <DateTime "2014 September 26 00:00">
 If you need to filter values manually, you can override the setter in the form.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
 
   def title=(value)
@@ -648,10 +648,10 @@ Virtual fields come in handy when there's no direct mapping to a model attribute
 
 ### Virtual Fields
 
-Often, fields like `password_confirmation` should neither be read from nor written back to the model. Reform comes with the `:virtual` option to handle that case.
+Often, fields like `password_confirmation` should neither be read from nor written back to the model. ReformOneTwoSix comes with the `:virtual` option to handle that case.
 
 ```ruby
-class PasswordForm < Reform::Form
+class PasswordForm < ReformOneTwoSix::Form
   property :password
   property :password_confirmation, virtual: true
 ```
@@ -676,7 +676,7 @@ form.save do |nested|
 When you want to show a value but skip processing it after submission the `:writeable` option is your friend.
 
 ```ruby
-class ProfileForm < Reform::Form
+class ProfileForm < ReformOneTwoSix::Form
   property :country, writeable: false
 ```
 
@@ -701,10 +701,10 @@ property :credit_card_number, readable: false
 
 ## Validations From Models
 
-Sometimes when you still keep validations in your models (which you shouldn't) copying them to a form might not feel right. In that case, you can let Reform automatically copy them.
+Sometimes when you still keep validations in your models (which you shouldn't) copying them to a form might not feel right. In that case, you can let ReformOneTwoSix automatically copy them.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
 
   extend ActiveModel::ModelValidations
@@ -717,7 +717,7 @@ Note how `copy_validations_from` copies over the validations allowing you to sta
 This also works with Composition.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   include Composition
   # ...
 
@@ -730,31 +730,31 @@ Be warned that we _do not_ encourage copying validations. You should rather move
 
 ## Agnosticism: Mapping Data
 
-Reform doesn't really know whether it's working with a PORO, an `ActiveRecord` instance or a `Sequel` row.
+ReformOneTwoSix doesn't really know whether it's working with a PORO, an `ActiveRecord` instance or a `Sequel` row.
 
 When rendering the form, reform calls readers on the decorated model to retrieve the field data (`Song#title`, `Song#length`).
 
-When syncing a submitted form, the same happens using writers. Reform simply calls `Song#title=(value)`. No knowledge is required about the underlying database layer.
+When syncing a submitted form, the same happens using writers. ReformOneTwoSix simply calls `Song#title=(value)`. No knowledge is required about the underlying database layer.
 
-The same applies to saving: Reform will call `#save` on the main model and nested models.
+The same applies to saving: ReformOneTwoSix will call `#save` on the main model and nested models.
 
 Nesting forms only requires readers for the nested properties as `Album#songs`.
 
 
 ## Rails Integration
 
-Check out [@gogogarret](https://twitter.com/GoGoGarrett/)'s [sample Rails app](https://github.com/gogogarrett/reform_example) using Reform.
+Check out [@gogogarret](https://twitter.com/GoGoGarrett/)'s [sample Rails app](https://github.com/gogogarrett/reform_example) using ReformOneTwoSix.
 
-Rails and Reform work together out-of-the-box.
+Rails and ReformOneTwoSix work together out-of-the-box.
 
 However, you should know about two things.
 
 1. In case you explicitely _don't_ want to have automatic support for `ActiveRecord` and form builder: `require reform/form`, only.
-2. In some setups around Rails 4 the `Form::ActiveRecord` module is not loaded properly, usually triggering a `NoMethodError` saying `undefined method 'model'`. If that happened to you, `require 'reform/rails'` manually at the bottom of your `config/application.rb`.
+2. In some setups around Rails 4 the `Form::ActiveRecord` module is not loaded properly, usually triggering a `NoMethodError` saying `undefined method 'model'`. If that happened to you, `require 'reform_one_two_six/rails'` manually at the bottom of your `config/application.rb`.
 
 ## ActiveRecord Compatibility
 
-Reform provides the following `ActiveRecord` specific features. They're mixed in automatically in a Rails/AR setup.
+ReformOneTwoSix provides the following `ActiveRecord` specific features. They're mixed in automatically in a Rails/AR setup.
 
  * Uniqueness validations. Use `validates_uniqueness_of` in your form.
 
@@ -763,28 +763,28 @@ As mentioned in the [Rails Integration](https://github.com/apotonick/reform#rail
 You may want to include the module manually then.
 
 ```ruby
-class SongForm < Reform::Form
-  include Reform::Form::ActiveRecord
+class SongForm < ReformOneTwoSix::Form
+  include ReformOneTwoSix::Form::ActiveRecord
 ```
 
 
 ## ActiveModel Compliance
 
-Forms in Reform can easily be made ActiveModel-compliant.
+Forms in ReformOneTwoSix can easily be made ActiveModel-compliant.
 
 Note that this step is _not_ necessary in a Rails environment.
 
 ```ruby
-class SongForm < Reform::Form
-  include Reform::Form::ActiveModel
+class SongForm < ReformOneTwoSix::Form
+  include ReformOneTwoSix::Form::ActiveModel
 end
 ```
 
 If you're not happy with the `model_name` result, configure it manually.
 
 ```ruby
-class CoverSongForm < Reform::Form
-  include Reform::Form::ActiveModel
+class CoverSongForm < ReformOneTwoSix::Form
+  include ReformOneTwoSix::Form::ActiveModel
 
   model :song
 end
@@ -800,9 +800,9 @@ To make your forms work with all the form gems like `simple_form` or Rails `form
 Again, this step is implicit in Rails and you don't need to do it manually.
 
 ```ruby
-class SongForm < Reform::Form
-  include Reform::Form::ActiveModel
-  include Reform::Form::ActiveModel::FormBuilderMethods
+class SongForm < ReformOneTwoSix::Form
+  include ReformOneTwoSix::Form::ActiveModel
+  include ReformOneTwoSix::Form::ActiveModel::FormBuilderMethods
 end
 ```
 
@@ -811,7 +811,7 @@ end
 If you want full support for `simple_form` do as follows.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   include ModelReflections
 ```
 
@@ -822,7 +822,7 @@ Including this module will add `#column_for_attribute` and other methods need by
 In case you're processing uploaded files with your form using CarrierWave, Paperclip, Dragonfly or Paperdragon we recommend using the awesome [file_validators](https://github.com/musaffa/file_validators) gem for file type and size validations.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :image
 
   validates :image, file_size: {less_than: 2.megabytes},
@@ -831,14 +831,14 @@ class SongForm < Reform::Form
 
 ## Multiparameter Dates
 
-Composed multi-parameter dates as created by the Rails date helper are processed automatically. As soon as Reform detects an incoming `release_date(i1)` or the like it is gonna be converted into a date.
+Composed multi-parameter dates as created by the Rails date helper are processed automatically. As soon as ReformOneTwoSix detects an incoming `release_date(i1)` or the like it is gonna be converted into a date.
 
 Note that the date will be `nil` when one of the components (year/month/day) is missing.
 
 
 ## Security
 
-By explicitely defining the form layout using `::property` there is no more need for protecting from unwanted input. `strong_parameter` or `attr_accessible` become obsolete. Reform will simply ignore undefined incoming parameters.
+By explicitely defining the form layout using `::property` there is no more need for protecting from unwanted input. `strong_parameter` or `attr_accessible` become obsolete. ReformOneTwoSix will simply ignore undefined incoming parameters.
 
 
 ## Nesting Without Inline Representers
@@ -859,7 +859,7 @@ The nested `SongForm` is a stand-alone form class you have to provide.
 When "real" coercion is too much and you simply want to convert incoming data yourself, override the setter.
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :title
 
   def title=(v)
@@ -875,7 +875,7 @@ This will capitalize the title _after_ calling `form.validate` but _before_ vali
 In case you want to change a value for presentation or provide a default value, override the reader. This is only considered when the form is rendered (e.g. in `form_for`).
 
 ```ruby
-class SongForm < Reform::Form
+class SongForm < ReformOneTwoSix::Form
   property :genre
 
   def genre
@@ -914,7 +914,7 @@ The `sync:` option allows to statically add a lambda to a property.
 property :title, sync: lambda { |value, options| model.set_title(value) }
 ```
 
-Instead of running Reform's built-in sync for this property the block is run.
+Instead of running ReformOneTwoSix's built-in sync for this property the block is run.
 
 You can also provide the sync lambda at run-time.
 
@@ -967,7 +967,7 @@ Collections and partial collection population is covered in chapter 5.
 You can run your very own populator logic if you're keen (and you know what you're doing).
 
 ```ruby
-class AlbumForm < Reform::Form
+class AlbumForm < ReformOneTwoSix::Form
   # ...
 
   collection :songs, populator: lambda { |fragment, args| args.binding[:form].new(Song.find fragment[:id]) } do
@@ -989,7 +989,7 @@ You can do this using `#options_for`.
 form.options_for(:title) # => {:readable=>true, :coercion_type=>String}
 ```
 
-Note that Reform renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you're forward-compatible.
+Note that ReformOneTwoSix renames some options (e.g. `:type` internally becomes `:coercion_type`). Those names are private API and might be changed without deprecation. You better test rendering logic in a unit test to make sure you're forward-compatible.
 
 ## Support
 

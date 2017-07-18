@@ -47,7 +47,7 @@
 * Due to countless bugs we no longer include support for simple_form's type interrogation automatically. This allows using forms with non-AM objects. If you want full support for simple_form do as follows.
 
     ```ruby
-    class SongForm < Reform::Form
+    class SongForm < ReformOneTwoSix::Form
       include ModelReflections
     ```
 
@@ -84,7 +84,7 @@
 
     Thanks to @zubin for this brillant idea!
 
-* Reform now tracks which attributes have changed after `#validate`. You can check that using `form.changed?(:title)`.
+* ReformOneTwoSix now tracks which attributes have changed after `#validate`. You can check that using `form.changed?(:title)`.
 * When including `Sync::SkipUnchanged`, the form won't try to assign unchanged values anymore in `#sync`. This is extremely helpful when handling file uploads and the like.
 * Both `#sync` and `#save` can be configured dynamically now.
 
@@ -94,7 +94,7 @@
     property :title, sync: lambda { |value, options| model.set_title(value) }
     ```
 
-    This won't run Reform's built-in sync for this property.
+    This won't run ReformOneTwoSix's built-in sync for this property.
 
     You can also provide the sync lambda at run-time.
 
@@ -122,7 +122,7 @@
     ```
 
   This will prefix the error with `:base`.
-* Need your form to parse JSON? Include `Reform::Form::JSON`, the `#validate` method now expects a JSON string and will deserialize and populate the form from the JSON document.
+* Need your form to parse JSON? Include `ReformOneTwoSix::Form::JSON`, the `#validate` method now expects a JSON string and will deserialize and populate the form from the JSON document.
 * Added `Form::schema` to generate a pure representer from the form's representer.
 * Added `:readable` and `:writeable` option which allow to skip reading or writing to the model when `false`.
 
@@ -139,7 +139,7 @@
 * Deprecate first block argument in save. It's new signature is `save { |hash| }`. You already got the form instance when calling `form.save` so there's no need to pass it into the block.
 * `#validate` does **not** touch any model anymore. Both single values and collections are written to the model after `#sync` or `#save`.
 * Coercion now happens in `#validate`, only.
-* You can now define forms in modules including `Reform::Form::Module` to improve reusability.
+* You can now define forms in modules including `ReformOneTwoSix::Form::Module` to improve reusability.
 * Inheriting from forms and then overriding/extending properties with `:inherit` now works properly.
 * You can now define methods in inline forms.
 * Added `Form::ActiveModel::ModelValidations` to copy validations from model classes. Thanks to @cameron-martin for this fine addition.
@@ -170,7 +170,7 @@ end
 
 will result in lowercased title when rendering the form (and only then).
 
-The reason for this confusion is that you don't blog enough about Reform. Only after introducing all those deprecation warnings, people started to contact me to ask what's going on. This gave me the feedback I needed to decide what's the best way for filtering incoming data.
+The reason for this confusion is that you don't blog enough about ReformOneTwoSix. Only after introducing all those deprecation warnings, people started to contact me to ask what's going on. This gave me the feedback I needed to decide what's the best way for filtering incoming data.
 
 ## 1.0.3
 
@@ -189,28 +189,28 @@ The reason for this confusion is that you don't blog enough about Reform. Only a
     end
     ```
 
-    This is because in Reform 1.1, those accessors will only be used when rendering the form, e.g. when doing `= @form.title`. If you override the accessors for presentation, only, you're fine. Add `presentation_accessors: true` to any property, the warnings will be suppressed and everything's gonna work. You may remove `presentation_accessors: true` in 1.1, but it won't affect the form.
+    This is because in ReformOneTwoSix 1.1, those accessors will only be used when rendering the form, e.g. when doing `= @form.title`. If you override the accessors for presentation, only, you're fine. Add `presentation_accessors: true` to any property, the warnings will be suppressed and everything's gonna work. You may remove `presentation_accessors: true` in 1.1, but it won't affect the form.
 
-    However, if you used to override `#title` or `#title=` to manipulate incoming data, this is no longer working in 1.1. The reason for this is to make Reform cleaner. You will get two options `:validate_processor` and `:sync_processor` in order to filter data when calling `#validate` and when syncing data back to the model with `#sync` or `#save`.
+    However, if you used to override `#title` or `#title=` to manipulate incoming data, this is no longer working in 1.1. The reason for this is to make ReformOneTwoSix cleaner. You will get two options `:validate_processor` and `:sync_processor` in order to filter data when calling `#validate` and when syncing data back to the model with `#sync` or `#save`.
 
 ## 1.0.1
 
 * Deprecated model readers for `Composition` and `ActiveModel`. Consider the following setup.
     ```ruby
-      class RecordingForm < Reform::Form
+      class RecordingForm < ReformOneTwoSix::Form
         include Composition
 
         property :title, on: :song
       end
     ```
 
-  Before, Reform would allow you to do `form.song` which returned the song model. You can still do this (but you shouldn't) with `form.model[:song]`.
+  Before, ReformOneTwoSix would allow you to do `form.song` which returned the song model. You can still do this (but you shouldn't) with `form.model[:song]`.
 
-  This allows having composed models and properties with the same name. Until 1.1, you have to use `skip_accessors: true` to advise Reform _not_ to create the deprecated accessor.
+  This allows having composed models and properties with the same name. Until 1.1, you have to use `skip_accessors: true` to advise ReformOneTwoSix _not_ to create the deprecated accessor.
 
   Also deprecated is the alias accessor as found with `ActiveModel`.
     ```ruby
-      class RecordingForm < Reform::Form
+      class RecordingForm < ReformOneTwoSix::Form
         include Composition
         include ActiveModel
 
@@ -251,7 +251,7 @@ The reason for this confusion is that you don't blog enough about Reform. Only a
 
 ## 0.2.5
 
-* Allow proper form inheritance. When having `HitForm < SongForm < Reform::Form` the `HitForm` class will contain `SongForm`'s properties in addition to its own fields.
+* Allow proper form inheritance. When having `HitForm < SongForm < ReformOneTwoSix::Form` the `HitForm` class will contain `SongForm`'s properties in addition to its own fields.
 * `::model` is now inherited properly.
 * Allow instantiation of nested form with emtpy nested properties.
 
@@ -285,15 +285,15 @@ The reason for this confusion is that you don't blog enough about Reform. Only a
 ## 0.2.0
 
 * Added nested property and collection for `has_one` and `has_many` relationships. . Note that this currently works only 1-level deep.
-* Renamed `Reform::Form::DSL` to `Reform::Form::Composition` and deprecated `DSL`.
-* `require 'reform'` now automatically requires Rails stuff in a Rails environment. Mainly, this is the FormBuilder compatibility layer that is injected into `Form`. If you don't want that, only require 'reform/form'.
+* Renamed `ReformOneTwoSix::Form::DSL` to `ReformOneTwoSix::Form::Composition` and deprecated `DSL`.
+* `require 'reform_one_two_six'` now automatically requires Rails stuff in a Rails environment. Mainly, this is the FormBuilder compatibility layer that is injected into `Form`. If you don't want that, only require 'reform/form'.
 * Composition now totally optional
 * `Form.new` now accepts one argument, only: the model/composition. If you want to create your own representer, inject it by overriding `Form#mapper`. Note that this won't create property accessors for you.
 * `Form::ActiveModel` no longer creates accessors to your represented models, e.g. having `property :title, on: :song` doesn't allow `form.song` anymore. This is because the actual model and the form's state might differ, so please use `form.title` directly.
 
 ## 0.1.3
 
-* Altered `reform/rails` to conditionally load `ActiveRecord` code and created `reform/active_record`.
+* Altered `reform_one_two_six/rails` to conditionally load `ActiveRecord` code and created `reform_one_two_six/active_record`.
 
 ## 0.1.2
 
@@ -302,7 +302,7 @@ The reason for this confusion is that you don't blog enough about Reform. Only a
 
 ## 0.1.1
 
-* Added `reform/rails` that requires everything you need (even in other frameworks :).
+* Added `reform_one_two_six/rails` that requires everything you need (even in other frameworks :).
 * Added `Form::ActiveRecord` that gives you `validates_uniqueness_with`. Note that this is strongly coupled to your database, thou.
 * Merged a lot of cleanups from sweet @parndt <3.
 

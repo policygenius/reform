@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class SkipUnchangedTest < MiniTest::Spec
-  class SongForm < Reform::Form
+  class SongForm < ReformOneTwoSix::Form
     include Sync::SkipUnchanged
     register_feature Sync::SkipUnchanged
 
@@ -64,7 +64,7 @@ class SkipUnchangedWithVirtualTest < MiniTest::Spec
   let (:form) { HitForm.new(song) }
   let (:song) { Song.new(nil, nil, Band.new) }
 
-  class HitForm < Reform::Form
+  class HitForm < ReformOneTwoSix::Form
     include Sync::SkipUnchanged
     register_feature Sync::SkipUnchanged
 
