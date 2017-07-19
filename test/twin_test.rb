@@ -1,16 +1,16 @@
 require 'test_helper'
 
 require 'test_helper'
-require 'reform/twin'
+require 'reform_one_two_six/twin'
 
 class TwinTest < MiniTest::Spec
-  class SongForm < Reform::Form
+  class SongForm < ReformOneTwoSix::Form
     class Twin < Disposable::Twin
       property :title
       option :is_online # TODO: this should make it read-only in reform!
     end
 
-    include Reform::Twin
+    include ReformOneTwoSix::Twin
     twin Twin
   end
 

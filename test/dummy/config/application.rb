@@ -16,5 +16,3 @@ module Dummy
     config.cache_store = :memory_store
   end
 end
-
-#require "reform/rails" # FIXME: this has to happen automatically in the rake test_rails run.

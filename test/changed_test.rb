@@ -1,8 +1,8 @@
 require 'test_helper'
-require 'reform/form/coercion'
+require 'reform_one_two_six/form/coercion'
 
 class ChangedTest < BaseTest
-  class AlbumForm < Reform::Form
+  class AlbumForm < ReformOneTwoSix::Form
     include Coercion
 
     property :title

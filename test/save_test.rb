@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class SaveTest < BaseTest
-  class AlbumForm < Reform::Form
+  class AlbumForm < ReformOneTwoSix::Form
     property :title
 
     property :hit do
@@ -68,7 +68,7 @@ class SaveTest < BaseTest
 
   describe "save: false" do
     let (:form) {
-      Class.new(Reform::Form) do
+      Class.new(ReformOneTwoSix::Form) do
         property :hit do
           property :title
         end
@@ -118,7 +118,7 @@ class SaveWithDynamicOptionsTest < MiniTest::Spec
     include Saveable
   end
 
-  class SongForm < Reform::Form
+  class SongForm < ReformOneTwoSix::Form
     property :title#, save: false
     property :length, virtual: true
   end

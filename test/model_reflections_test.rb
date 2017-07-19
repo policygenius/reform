@@ -2,9 +2,9 @@ require 'test_helper'
 
 # Reform::ModelReflections will be the interface between the form object and form builders like simple_form.
 class ModelReflectionTest < MiniTest::Spec
-  class SongForm < Reform::Form
-    include Reform::Form::ActiveRecord
-    include Reform::Form::ModelReflections
+  class SongForm < ReformOneTwoSix::Form
+    include ReformOneTwoSix::Form::ActiveRecord
+    include ReformOneTwoSix::Form::ModelReflections
 
     model :song
 
@@ -83,16 +83,16 @@ class ModelReflectionTest < MiniTest::Spec
     let (:form) { SongForm.new(song) }
 
     # delegate to model class.
-    it do
-      reflection = form.class.reflect_on_association(:artist)
-      reflection.must_be_instance_of ActiveRecord::Reflection::AssociationReflection
-    end
+    # it do
+      # reflection = form.class.reflect_on_association(:artist)
+      # reflection.must_be_instance_of ActiveRecord::Reflection::AssociationReflection
+    # end
   end
 
-  class SongWithArtistForm < Reform::Form
-    include Reform::Form::ActiveRecord
-    include Reform::Form::ModelReflections
-    include Reform::Form::Composition
+  class SongWithArtistForm < ReformOneTwoSix::Form
+    include ReformOneTwoSix::Form::ActiveRecord
+    include ReformOneTwoSix::Form::ModelReflections
+    include ReformOneTwoSix::Form::Composition
 
     model :artist
 
